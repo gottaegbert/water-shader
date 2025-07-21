@@ -2,7 +2,7 @@
 
 A **fully custom GLSL water shader** built with **React Three Fiber** and **Three.js**, featuring animated waves, dynamic reflections, and procedurally generated surface distortion. Built for performance and realism using noise-based vertex displacement and a pixelated reflection map.
 
-[![Hero Screenshot](public/heropage.png)](https://ascii-butterfly.vercel.app/)
+[![Hero Screenshot](public/heropage.png)](https://water-shader-seven.vercel.app/)
 
 ---
 
