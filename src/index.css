@@ -133,3 +133,32 @@ a {
   font-style: normal;
   font-display: swap;
 }
+
+/* App.js panel animations */
+@keyframes panelSlideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes panelSlideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@media (max-width: 768px) {
+  .first-person-ui-container {
+    top: 15px !important;
+    left: 15px !important;
+  }
+  .first-person-ui-container button {
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+  }
+}

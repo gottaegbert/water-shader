@@ -6,16 +6,15 @@ uniform float uRoughnessScale;
 
 varying vec4 vWPosition;
 varying vec3 vNormal;
+varying vec2 vRefUv;
 
 void main() {
   vec3 normal = normalize(vNormal);
   vec3 viewDir = normalize(vWPosition.xyz - cameraPosition);
 
-  ivec2 iRes = textureSize(uReflectionMap, 0);
-  vec2 uv = gl_FragCoord.xy / vec2(iRes);
-  uv.y = 1.0 - uv.y;
-
-  vec3 reflection = texture(uReflectionMap, uv + normal.xz * 0.06).rgb;
+  // Sample the reflection render using coordinates from reflection camera
+  vec2 uv = clamp(vRefUv + normal.xz * 0.06, 0.0, 1.0);
+  vec3 reflection = texture(uReflectionMap, uv).rgb;
   float d = max(0.0, dot(normal, -normalize(vec3(3, 10, 7))));
 
   vec3 color = reflection;

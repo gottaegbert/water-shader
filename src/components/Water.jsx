@@ -7,7 +7,7 @@ import functions from '../shaders/functions.glsl?raw'
 import vertexMain from '../shaders/water/vertex.glsl?raw'
 import fragmentMain from '../shaders/water/fragment.glsl?raw'
 
-export default function Water({ reflectionTarget, config, timeRef }) {
+export default function Water({ reflectionTarget, config, timeRef, reflectionCamera }) {
   const materialRef = useRef()
 
   useFrame(() => {
@@ -19,6 +19,10 @@ export default function Water({ reflectionTarget, config, timeRef }) {
       materialRef.current.uniforms.uReflectivity.value = config.reflectivity
       materialRef.current.uniforms.uRoughness.value = config.roughness
       materialRef.current.uniforms.uRoughnessScale.value = config.roughnessScale
+      if (reflectionCamera) {
+        materialRef.current.uniforms.uRefProjectionMatrix.value.copy(reflectionCamera.projectionMatrix)
+        materialRef.current.uniforms.uRefViewMatrix.value.copy(reflectionCamera.matrixWorldInverse)
+      }
     }
   })
 
@@ -47,6 +51,8 @@ export default function Water({ reflectionTarget, config, timeRef }) {
           uRoughness: { value: config.roughness },
           uRoughnessScale: { value: config.roughnessScale },
           uReflectionMap: { value: reflectionTarget.texture },
+          uRefProjectionMatrix: { value: new THREE.Matrix4() },
+          uRefViewMatrix: { value: new THREE.Matrix4() },
         }}
       />
     </mesh>

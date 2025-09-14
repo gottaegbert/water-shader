@@ -1,9 +1,12 @@
 uniform float uTime;
 uniform float uFrequency;
 uniform float uAmplitude;
+uniform mat4 uRefProjectionMatrix;
+uniform mat4 uRefViewMatrix;
 
 varying vec4 vWPosition;
 varying vec3 vNormal;
+varying vec2 vRefUv;
 
 float getElevation(vec3 pos) {
   float e = cnoise(pos.xyz * uFrequency + uTime * 0.85) * uAmplitude;
@@ -24,6 +27,11 @@ void main() {
   vNormal = normalize(cross(wPositionX.xyz - wPosition.xyz, wPositionZ.xyz - wPosition.xyz));
 
   vWPosition = wPosition;
+
+  // Project world position into reflection camera clip space -> uv
+  vec4 refClip = uRefProjectionMatrix * uRefViewMatrix * wPosition;
+  vec2 ndc = refClip.xy / refClip.w;
+  vRefUv = ndc * 0.5 + 0.5;
 
   gl_Position = projectionMatrix * viewMatrix * wPosition;
 }
