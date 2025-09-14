@@ -1,40 +1,37 @@
-import React, { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
+import React, { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
-import noise from '../shaders/noise.glsl?raw'
-import functions from '../shaders/functions.glsl?raw'
-import vertexMain from '../shaders/water/vertex.glsl?raw'
-import fragmentMain from '../shaders/water/fragment.glsl?raw'
+import noise from "../shaders/noise.glsl?raw";
+import functions from "../shaders/functions.glsl?raw";
+import vertexMain from "../shaders/water/vertex.glsl?raw";
+import fragmentMain from "../shaders/water/fragment.glsl?raw";
 
 export default function Water({ reflectionTarget, config, timeRef, reflectionCamera }) {
-  const materialRef = useRef()
+  const materialRef = useRef();
 
   useFrame(() => {
     if (materialRef.current) {
-      materialRef.current.uniforms.uTime.value = timeRef.current
-      materialRef.current.uniforms.uFrequency.value = config.frequency
-      materialRef.current.uniforms.uAmplitude.value = config.amplitude
-      materialRef.current.uniforms.uPixelation.value = config.pixelation
-      materialRef.current.uniforms.uReflectivity.value = config.reflectivity
-      materialRef.current.uniforms.uRoughness.value = config.roughness
-      materialRef.current.uniforms.uRoughnessScale.value = config.roughnessScale
+      materialRef.current.uniforms.uTime.value = timeRef.current;
+      materialRef.current.uniforms.uFrequency.value = config.frequency;
+      materialRef.current.uniforms.uAmplitude.value = config.amplitude;
+      materialRef.current.uniforms.uPixelation.value = config.pixelation;
+      materialRef.current.uniforms.uReflectivity.value = config.reflectivity;
+      materialRef.current.uniforms.uRoughness.value = config.roughness;
+      materialRef.current.uniforms.uRoughnessScale.value = config.roughnessScale;
       if (reflectionCamera) {
-        materialRef.current.uniforms.uRefProjectionMatrix.value.copy(reflectionCamera.projectionMatrix)
-        materialRef.current.uniforms.uRefViewMatrix.value.copy(reflectionCamera.matrixWorldInverse)
+        materialRef.current.uniforms.uRefProjectionMatrix.value.copy(reflectionCamera.projectionMatrix);
+        materialRef.current.uniforms.uRefViewMatrix.value.copy(reflectionCamera.matrixWorldInverse);
       }
     }
-  })
+  });
 
   return (
-    <mesh
-      rotation={[-Math.PI * 0.5, 0, 0]}
-      position={[0, 0.01, 0]}
-      name="water"
-      receiveShadow
-    >
+    <mesh rotation={[-Math.PI * 0.5, 0, 0]} position={[0, 0.01, 0]} name="water" receiveShadow>
       <planeGeometry args={[20, 20, 200, 200]} />
+      {/* Force material remount on shader edits (hot-reload) */}
       <shaderMaterial
+        key={useMemo(() => `${vertexMain}\n---\n${fragmentMain}`, [vertexMain, fragmentMain])}
         ref={materialRef}
         side={THREE.DoubleSide}
         transparent
@@ -51,10 +48,12 @@ export default function Water({ reflectionTarget, config, timeRef, reflectionCam
           uRoughness: { value: config.roughness },
           uRoughnessScale: { value: config.roughnessScale },
           uReflectionMap: { value: reflectionTarget.texture },
+          uBaseColor: { value: new THREE.Color("#1a5fa2") },
+          uTransparency: { value: 0.9 },
           uRefProjectionMatrix: { value: new THREE.Matrix4() },
           uRefViewMatrix: { value: new THREE.Matrix4() },
         }}
       />
     </mesh>
-  )
+  );
 }
