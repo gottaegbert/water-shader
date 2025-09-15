@@ -104,8 +104,13 @@ export default function Experience() {
     amplitude: 0.07,
     pixelation: 1.0,
     reflectivity: 0.7,
-    roughness: 0.04,
+    roughness: 0.4,
     roughnessScale: 1.5,
+    transparency: 0.9,
+    tintColor: "#15bbeb",
+    blurRadius: 5,
+    blurStrength: 1.0,
+    maxReflectAngleDeg: 30,
   });
 
   // Single world rotation for sky+environment alignment
@@ -160,6 +165,40 @@ export default function Experience() {
         max: 5,
         step: 0.1,
         onChange: (v) => setConfig((c) => ({ ...c, roughnessScale: v })),
+      },
+      transparency: {
+        value: config.transparency,
+        min: 0.0,
+        max: 1.0,
+        step: 0.01,
+        onChange: (v) => setConfig((c) => ({ ...c, transparency: v })),
+      },
+      tintColor: {
+        value: config.tintColor,
+        label: "Tint",
+        onChange: (v) => setConfig((c) => ({ ...c, tintColor: v })),
+      },
+      blurRadius: {
+        value: config.blurRadius,
+        min: 0.0,
+        max: 4.0,
+        step: 0.05,
+        onChange: (v) => setConfig((c) => ({ ...c, blurRadius: v })),
+      },
+      blurStrength: {
+        value: config.blurStrength,
+        min: 0.0,
+        max: 1.0,
+        step: 0.01,
+        onChange: (v) => setConfig((c) => ({ ...c, blurStrength: v })),
+      },
+      maxReflectAngleDeg: {
+        value: config.maxReflectAngleDeg,
+        label: "Reflect Cutoff (deg)",
+        min: 0,
+        max: 89,
+        step: 1,
+        onChange: (v) => setConfig((c) => ({ ...c, maxReflectAngleDeg: v })),
       },
     });
   }
@@ -230,7 +269,17 @@ export default function Experience() {
       <SkyComponent worldRotationY={world.rotationY} />
       <HDREnvironment worldRotationY={world.rotationY} />
       <EnhancedLights />
-      <OrbitControls minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2.2} />
+      <OrbitControls
+        enablePan
+        enableZoom
+        enableRotate
+        enableDamping
+        dampingFactor={0.09}
+        minDistance={3}
+        maxDistance={50}
+        minPolarAngle={0}
+        maxPolarAngle={Math.PI / 2.1}
+      />
 
       <group ref={meshRef} position={[0, 0, 0]}>
         <Model scale={0.2} position={[0, 0.1, 0]} />

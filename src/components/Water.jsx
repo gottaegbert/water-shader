@@ -19,6 +19,14 @@ export default function Water({ reflectionTarget, config, timeRef, reflectionCam
       materialRef.current.uniforms.uReflectivity.value = config.reflectivity;
       materialRef.current.uniforms.uRoughness.value = config.roughness;
       materialRef.current.uniforms.uRoughnessScale.value = config.roughnessScale;
+      if (materialRef.current.uniforms.uTransparency)
+        materialRef.current.uniforms.uTransparency.value = config.transparency ?? 0.6;
+      if (materialRef.current.uniforms.uBaseColor)
+        materialRef.current.uniforms.uBaseColor.value.set(config.tintColor ?? "#1a5fa2");
+      if (materialRef.current.uniforms.uBlurRadius)
+        materialRef.current.uniforms.uBlurRadius.value = config.blurRadius ?? 1.5;
+      if (materialRef.current.uniforms.uBlurStrength)
+        materialRef.current.uniforms.uBlurStrength.value = config.blurStrength ?? 0.7;
       if (reflectionCamera) {
         materialRef.current.uniforms.uRefProjectionMatrix.value.copy(reflectionCamera.projectionMatrix);
         materialRef.current.uniforms.uRefViewMatrix.value.copy(reflectionCamera.matrixWorldInverse);
@@ -48,8 +56,10 @@ export default function Water({ reflectionTarget, config, timeRef, reflectionCam
           uRoughness: { value: config.roughness },
           uRoughnessScale: { value: config.roughnessScale },
           uReflectionMap: { value: reflectionTarget.texture },
-          uBaseColor: { value: new THREE.Color("#1a5fa2") },
-          uTransparency: { value: 0.9 },
+          uBaseColor: { value: new THREE.Color(config.tintColor ?? "#1a5fa2") },
+          uTransparency: { value: config.transparency ?? 0.9 },
+          uBlurRadius: { value: config.blurRadius ?? 1.5 },
+          uBlurStrength: { value: config.blurStrength ?? 0.7 },
           uRefProjectionMatrix: { value: new THREE.Matrix4() },
           uRefViewMatrix: { value: new THREE.Matrix4() },
         }}
